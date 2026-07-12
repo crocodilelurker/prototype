@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHT
+  MODERATE
+  ACTIVE
+  VERY_ACTIVE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum AppGoal {
+  WEIGHT_LOSE
+  WEIGHT_GAIN
+  WEIGHT_STABLE
+}
+
+enum Diet {
+  VEG
+  NON_VEG
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  name     String
+  password String
+
+  gender   Gender?
+  age      Int?
+  heightCm Float?
+  weightKg Float?
+  bmi      Float?
+  activity ActivityLevel?
+  diet     Diet?
+
+  appGoal        AppGoal?
+  targetCalories Int?     @default(0)
+  targetProteins Int?     @default(0)
+  targetCarbs    Int?     @default(0)
+  targetFats     Int?     @default(0)
+
+  isNewUser Boolean @default(true)
+
+  foodRecords Food[]
+
+  createdAt DateTime @default(now())
+}
+
+model Food {
+  id       String @id @default(uuid())
+  name     String
+  quantity String
+  calories Int
+  proteins Int
+  carbs    Int
+  fats     Int
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+}
